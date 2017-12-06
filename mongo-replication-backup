@@ -22,7 +22,7 @@ MongoDB Replication Backup and Recovering Steps:
 
 6. Now logging into mongoDB using mongo command it will be in startup2 state. 
 
-7. It will automatically recover data from mongo-slave(primary) machine. After sometime the state will change from stratup2 to secondary.
+7. It will automatically recover data from mongo-slave(primary) machine. After sometime the state will change from startup2 to secondary state.
 
 8. Then stop the mongod service in all the machine.
 
@@ -32,6 +32,6 @@ MongoDB Replication Backup and Recovering Steps:
 
     sudo service mongod start
 
-10. The mongo-master machine becomes primary and mongo-slave machine becomes secondary. 
+10. The mongo-master machine becomes primary state and mongo-slave machine becomes secondary state. 
 
 11. Check the recovered database using show dbs command in mongo-master(primary) machine.
