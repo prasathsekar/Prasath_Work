@@ -1,0 +1,37 @@
+MongoDB Replication Backup and Recovering Steps:
+
+1. When the Mongo-master system gets down, any one of the two mongo-slave machine will become secondary to primary state.
+
+2. Now check whether the mongo service is stopped running in mongo-master machine otherwise stop it.
+    
+    sudo service mongod stop
+
+3. Now delete the mongoDB path in the mongo-master machine, which is located in /data/db.
+
+    sudo rm -rf /data/db
+
+4. After deleteing the mongoDB path in mongo-master machine, create a new directory named db and give permission to it.
+
+    sudo mkdir /data/db
+
+    sudo chmod 777 /data/db
+
+5. And now start the mongoDB in mongo-master machine.
+
+    sudo service mongod start
+
+6. Now logging into mongoDB using mongo command it will be in startup2 state. 
+
+7. It will automatically recover data from mongo-slave(primary) machine. After sometime the state will change from stratup2 to secondary.
+
+8. Then stop the mongod service in all the machine.
+
+    sudo service mongod stop
+
+9. Finally start the mongod service in Mongo-master and mongo-slaves machines. 
+
+    sudo service mongod start
+
+10. The mongo-master machine becomes primary and mongo-slave machine becomes secondary. 
+
+11. Check the recovered database using show dbs command in mongo-master(primary) machine.
