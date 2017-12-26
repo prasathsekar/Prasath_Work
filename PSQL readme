@@ -1,0 +1,61 @@
+
+* Copying PostgreSQL database to another server
+
+
+  pg_dump -C -h localhost -U localuser dbname | psql -h remotehost -U remoteuser dbname
+
+(i.e) Localhost: Private IP, Local User: PSQL user, DBname: Name of the Database,
+      Remotehost: public IP of Remote system, Remote user: PSQL User, DBname: Name of the Database.
+
+
+* Import and export a PostgreSQL database
+
+   EXPORT A POSTGRESQL DATABASE:
+
+	pg_dump -U USERNAME DBNAME > dbexport.pgsql
+
+   IMPORT A POSTGRESQL DATABASE
+
+	psql -U USERNAME DBNAME < dbexport.pgsql
+
+#Backup PostgreSQL to Amazon S3
+
+
+sudo apt-get install s3cmd
+
+
+s3cmd --configure
+
+#Create a new shell file named as psql_backup.sh and write the following code in it.
+
+
+
+#!/usr/bin/env bash
+
+APP=PostgreSQL
+DB_NAME=telecmi
+DB_USER=telecmi
+DB_PASS=telecmi
+
+BUCKET_NAME=telecmi-bucket
+
+TIMESTAMP=$(date +%F_%T | tr ':' '-')
+TEMP_FILE=$(mktemp tmp.XXXXXXXXXX)
+S3_FILE="s3://$BUCKET_NAME/$APP/$APP-backup-$TIMESTAMP"
+
+PGPASSWORD=$DB_PASS pg_dump -Fc --no-acl -h localhost -U $DB_USER $DB_NAME > $T$
+s3cmd put $TEMP_FILE $S3_FILE 
+rm "$TEMP_FILE"
+
+sudo chmod +x psql_backup.sh
+
+./backup.sh
+
+#Add a cron entry using crontab -e and set it to run daily at 11pm
+
+crontab -e
+
+* 23 * * * /home/ubuntu/psql_backup.sh acme acme_db acme_user acme_pass
+
+
+
