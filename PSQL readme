@@ -1,5 +1,5 @@
 
-* Copying PostgreSQL database to another server
+* Copying PostgreSQL database to another server *In Psql-Master Machine 
 
 
   pg_dump -C -h localhost -U localuser dbname | psql -h remotehost -U remoteuser dbname

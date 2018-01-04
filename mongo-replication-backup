@@ -35,3 +35,13 @@ MongoDB Replication Backup and Recovering Steps:
 10. The mongo-master machine becomes primary state and mongo-slave machine becomes secondary state. 
 
 11. Check the recovered database using show dbs command in mongo-master(primary) machine.
+
+
+
+
+
+Copy MongoDB Database from one instance to another instance.
+
+
+sudo mongodump --db telecmi --archive | mongorestore --host publicIP --archive --drop
+
