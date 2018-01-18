@@ -1,0 +1,27 @@
+---
+# tasks file for ansible-role-s3cmd
+
+- name: Add s3cmd apt key
+  apt_key: url=http://s3tools.org/repo/deb-all/stable/s3tools.key state=present
+
+- name: Add s3cmd repos 
+  apt_repository: repo='deb http://s3tools.org/repo/deb-all stable/' state=present update_cache=yes
+
+- name: Install s3cmd tool
+  apt: name=s3cmd state=present
+ 
+- name: Place s3cmd config for root user
+  template: src=s3cfg.j2 dest=/root/.s3cfg owner=root group=root mode=600
+
+- name: Create sh file for mongo backup
+  template: src=mongo-s3-backup.sh dest=/home/ubuntu/ mode=0777
+
+- name: Execute the script
+  local_action: command sudo sh /home/ubuntu/mongo-s3-backup.sh
+
+- name: Create backup cronjob
+  cron: hour="23"
+        name="Backup MongoDB Daily 11:00 P.M"
+        cron_file="mongo-s3-backup"
+        user="root"
+        job="/home/ubuntu/mongo-s3-backup.sh"

@@ -64,5 +64,10 @@ It will automatically backup at every day 11:00 P.M
 * 23 * * * /home/ubuntu/mongo_backup.sh
 
 
+#Restore Command for mongoDB 
+
+mongorestore /path/<dumpfolder>
+
+
 
 
