@@ -1,0 +1,68 @@
+1. Install S3cmd
+
+sudo apt-get install s3cmd.
+
+
+2. Configure S3cmd
+
+s3cmd --configure
+
+
+3. Test S3cmd
+
+s3cmd ls
+
+
+4. Backup Script
+
+Create a new shell file named as mongo_backup.sh and write the following code in it.
+
+#!/bin/bash
+ 
+#Force file syncronization and lock writes
+mongo admin --eval "printjson(db.fsyncLock())"
+ 
+MONGODUMP_PATH="/usr/bin/mongodump"
+MONGO_DATABASE="Your_db_name" #replace with your database name
+ 
+TIMESTAMP=`date +%F-%H%M`
+S3_BUCKET_NAME="Your_Bucket_Name" #replace with your bucket name on Amazon S3
+S3_BUCKET_PATH="mongodb-backups"
+ 
+# Create backup
+$MONGODUMP_PATH -d $MONGO_DATABASE
+ 
+# Add timestamp to backup
+mv dump mongodb-$HOSTNAME-$TIMESTAMP
+tar cf mongodb-$HOSTNAME-$TIMESTAMP.tar mongodb-$HOSTNAME-$TIMESTAMP
+ 
+# Upload to S3
+s3cmd put mongodb-$HOSTNAME-$TIMESTAMP.tar s3://$S3_BUCKET_NAME/$S3_BUCKET_PATH/mongodb-$HOSTNAME-$TIMESTAMP.tar
+ 
+#Unlock database writes
+mongo admin --eval "printjson(db.fsyncUnlock())"
+#Delete local files
+rm -rf mongodb-*
+
+
+5. Verify the script
+
+bash mongo_backup.sh
+
+6. Automatic backup using Cron
+
+We now want to automate this process of taking the backup of MongoDB to S3.
+
+sudo su
+
+crontab -e
+
+Add the line at the bottom of the the cron file.
+
+It will automatically backup at every day 11:00 P.M
+
+* 23 * * * /home/ubuntu/mongo_backup.sh
+
+
+
+

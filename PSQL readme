@@ -28,34 +28,37 @@ s3cmd --configure
 
 #Create a new shell file named as psql_backup.sh and write the following code in it.
 
-
-
 #!/usr/bin/env bash
 
-APP=PostgreSQL
-DB_NAME=telecmi
-DB_USER=telecmi
-DB_PASS=telecmi
+APP=$1
 
-BUCKET_NAME=telecmi-bucket
+DB_NAME=$2
+DB_USER=$3
+DB_PASS=$4
+
+BUCKET_NAME=<YOUR_NAME_HERE>
 
 TIMESTAMP=$(date +%F_%T | tr ':' '-')
 TEMP_FILE=$(mktemp tmp.XXXXXXXXXX)
 S3_FILE="s3://$BUCKET_NAME/$APP/$APP-backup-$TIMESTAMP"
 
-PGPASSWORD=$DB_PASS pg_dump -Fc --no-acl -h localhost -U $DB_USER $DB_NAME > $T$
-s3cmd put $TEMP_FILE $S3_FILE 
+PGPASSWORD=$DB_PASS pg_dump -Fc --no-acl -h localhost -U $DB_USER $DB_NAME > $TEMP_FILE
+s3cmd put $TEMP_FILE $S3_FILE --encrypt
 rm "$TEMP_FILE"
+
 
 sudo chmod +x psql_backup.sh
 
-./backup.sh
+./psql_backup.sh
 
 #Add a cron entry using crontab -e and set it to run daily at 11pm
 
 crontab -e
 
 * 23 * * * /home/ubuntu/psql_backup.sh acme acme_db acme_user acme_pass
+
+#Refered from https://zaiste.net/backup_postgresql_to_amazon_s3/
+
 
 
 
